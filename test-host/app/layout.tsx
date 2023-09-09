@@ -16,7 +16,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <head>
+        {/* Inject the bundle that is required downstream */}
+        <script src='http://localhost:4000/test_lib/web/main.js' />
+      </head>
+      <body className={inter.className}>
+        {children}
+      </body>
     </html>
   )
 }

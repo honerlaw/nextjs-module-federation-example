@@ -9,7 +9,7 @@ export async function patchReact(compilation: Compilation, compiler: Compiler, a
             continue
         }
 
-        console.log(assetKey)
+        console.log('[patchReact]', assetKey)
 
         const { ReplaceSource } = compiler.webpack.sources
         const newSource = new ReplaceSource(source, PLUGIN_NAME)

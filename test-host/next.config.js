@@ -1,51 +1,5 @@
 const { MFPlugin } = require('../mf-plugin/lib')
 
-const promiseTemplate = (isServer, global, url) => {
-    if (isServer) {
-        return `promise new Promise((resolve, reject) => {
-            var http = require('http')
-            var fs = require('fs')
-            var path = require('path')
-
-            var download = function(url, dir, dest, cb) {
-                fs.mkdirSync(dir, { recursive: true })
-                var file = fs.createWriteStream(path.resolve(dir, dest))
-                http.get(url, function(response) {
-                    response.pipe(file)
-                    file.on('finish', function() {
-                        file.close(cb)
-                    })
-                })
-            }
-            var folderPath = "/Users/honerlaw/Development/module-federation/test-host/mf-assets/${global}/server"
-            const fileName = "remoteEntry.server.js"
-            var filePath = path.resolve(folderPath, fileName)
-            // download("${url}", folderPath, fileName, function() {
-                resolve(require(filePath))
-            // })
-        })`
-    }
-
-    return `promise new Promise((resolve, reject) => {
-      const script = document.createElement('script')
-      script.src = "${url}"
-      script.onload = () => {
-        const proxy = {
-          get: (request) => window.${global}.get(request),
-          init: (arg) => {
-            try {
-              return window.${global}.init(arg)
-            } catch(e) {
-              console.log('remote container already initialized')
-            }
-          }
-        }
-        resolve(proxy)
-      }
-      document.head.appendChild(script);
-    })`
-}
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     webpack: (
@@ -53,14 +7,26 @@ const nextConfig = {
         { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }
       ) => {
 
+        if (isServer) {
+
+          // simply require in the bundle for the server
+          config.externals.push({
+            "test-lib": `var require(process.cwd() + "/mf-assets/test_lib/server/main.js")`
+          })
+        } else {
+
+          // components are mounted globally, and managed through a Proxy
+          config.externals.push({
+            "test-lib": `var {
+              StateComp: window.externalsProxy.StateComp,
+              NoStateComp: window.externalsProxy.NoStateComp
+            }`
+          })
+        }
+
+        // will patch the pages to expose react
         config.plugins.push(new MFPlugin({
-            name: 'test_host',
-            library: isServer ? { type: "commonjs-module" } : undefined,
-            remotes: {
-                'test-lib': promiseTemplate(isServer, 'test_lib', `http://localhost:4000/${isServer ? 'server' : 'web'}/remoteEntry.${isServer ? 'server' : 'web'}.js`)
-            },
-            isExternalHost: true,
-            isServer
+          isExternalHost: true
         }))
 
         // Important: return the modified config

@@ -1,5 +1,3 @@
-"use client"
-
 import React from "react"
 import { useState } from "react"
 
@@ -15,3 +13,4 @@ export const StateComp: React.FC = () => {
         <button onClick={onClick}>increment</button>
     </div>
 }
+
