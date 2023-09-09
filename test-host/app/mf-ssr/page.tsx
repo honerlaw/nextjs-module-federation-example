@@ -1,21 +1,13 @@
-import React, { Suspense, lazy } from "react"
 import { TestStateComp } from "@/components/TestStateComp"
+import React from "react"
 
-const NoStateComp = lazy(() => {
-    return import("test-lib/NoStateComp").then((res) => {
-        return {
-            default: res.NoStateComp
-        }
-    })
-})
+import { NoStateComp } from "test-lib"
 
 export default async function Page() {
 
     return <div>
+        <NoStateComp />
         <TestStateComp />
-        <Suspense>
-            <NoStateComp />
-        </Suspense>
     </div>
 
 }

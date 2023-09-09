@@ -1,33 +1,29 @@
 const path = require('path');
-const { MFPlugin } = require('../mf-plugin/lib')
+const CopyPlugin = require("copy-webpack-plugin");
 
 const baseConfig = (isServer, mfPostfix) => ({
     mode: 'development',
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, 'dist', isServer ? 'server' : 'web'),
-        libraryTarget: isServer ? "commonjs-module" : undefined,
+        libraryTarget: isServer ? "commonjs-module" : 'umd',
     },
     devServer: {
         open: true,
         host: 'localhost',
     },
     plugins: [
-        new MFPlugin({
-            name: 'test_lib',
-            filename: `remoteEntry.${mfPostfix}.js`,
-            library: isServer ? { type: "commonjs-module" } : undefined,
-            exposes: {
-                './index': './src/index.ts',
-                './NoStateComp': './src/NoStateComp.tsx',
-                './StateComp': './src/StateComp.tsx',
-            },
-            isServer
-        })
+        new CopyPlugin({
+            patterns: [{
+                from: path.resolve(process.cwd(), "dist"),
+                to: path.resolve(process.cwd(), "../test-host/mf-assets/test_lib")
+            }],
+        }),
     ],
     externals: {
         // Use external version of React
-        "react": isServer ? `var require('react')` : `var React`,
+        "react": isServer ? `var require('react')` : `var window.React`,
+        "react-dom": isServer ? `var require('react-dom')` : `var ReactDOM`,
     },
     module: {
         rules: [
@@ -50,7 +46,7 @@ const baseConfig = (isServer, mfPostfix) => ({
 module.exports = [{
     ...baseConfig(false, 'web'),
     name: 'web',
-    // entry: './src/index.ts',
+    entry: './src/index.ts',
 }, {
     ...baseConfig(true, 'server'),
     name: 'server',

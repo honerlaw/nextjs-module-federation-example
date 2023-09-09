@@ -1,8 +1,7 @@
-import { container } from "webpack"
-
-export type MFPluginOptions = ConstructorParameters<typeof container.ModuleFederationPlugin>[0] & {
+export type MFPluginOptions = {
     isExternalHost?: boolean
     isServer?: boolean
+    remotes?: string[]
 }
 
 export const PLUGIN_NAME = 'MFPlugin'

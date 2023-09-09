@@ -1,17 +1,13 @@
 "use client"
 
-import React, { Suspense } from "react"
+import React from "react"
+import { NoStateComp } from "test-lib"
 
-const Component = React.lazy(() => {
-    return import("test-lib/StateComp").then((res) => {
-        return {
-            default: res.StateComp
-        }
-    })
-})
+// console.log(StateComp)
 
 export const TestStateComp: React.FC = () => {
-    return <Suspense>
-        <Component />
-    </Suspense>
+
+    console.log(NoStateComp, "hello")
+
+    return <NoStateComp />
 }

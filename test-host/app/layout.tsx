@@ -16,7 +16,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <head>
+      </head>
+      <body className={inter.className}>
+        {children}
+        <script src='http://localhost:4000/test_lib/web/main.js' />
+      </body>
     </html>
   )
 }

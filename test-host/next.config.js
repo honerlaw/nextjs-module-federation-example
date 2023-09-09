@@ -53,7 +53,28 @@ const nextConfig = {
         { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }
       ) => {
 
+        // okay so what we need to do is simply say our stuff is externals
+
+        if (isServer) {
+          config.externals.push({
+            "test-lib": `var require(process.cwd() + "/mf-assets/test_lib/server/main.js")`
+          })
+        } else {
+          config.externals.push({
+            "test-lib": `var {
+              StateComp: window.StateComp,
+              NoStateComp: window.NoStateComp
+            }`
+          })
+          // console.log(config.externals)
+        }
         config.plugins.push(new MFPlugin({
+          isExternalHost: true,
+          isServer,
+          remotes: ['test-lib']
+        }))
+
+        /*config.plugins.push(new MFPlugin({
             name: 'test_host',
             library: isServer ? { type: "commonjs-module" } : undefined,
             remotes: {
@@ -61,7 +82,7 @@ const nextConfig = {
             },
             isExternalHost: true,
             isServer
-        }))
+        }))*/
 
         // Important: return the modified config
         return config
