@@ -1,24 +1,19 @@
 const path = require('path');
-const CopyPlugin = require("copy-webpack-plugin");
+const { MFPlugin } = require('../mf-plugin/lib')
 
 const baseConfig = (isServer, mfPostfix) => ({
     mode: 'development',
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, 'dist', isServer ? 'server' : 'web'),
-        libraryTarget: isServer ? "commonjs-module" : 'umd',
+        libraryTarget: isServer ? "commonjs-module" : 'global',
     },
     devServer: {
         open: true,
         host: 'localhost',
     },
     plugins: [
-        new CopyPlugin({
-            patterns: [{
-                from: path.resolve(process.cwd(), "dist"),
-                to: path.resolve(process.cwd(), "../test-host/mf-assets/test_lib")
-            }],
-        }),
+        !isServer ? new MFPlugin() : undefined,
     ],
     externals: {
         // Use external version of React

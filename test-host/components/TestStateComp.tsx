@@ -1,13 +1,8 @@
 "use client"
 
 import React from "react"
-import { NoStateComp } from "test-lib"
-
-// console.log(StateComp)
+import { StateComp } from "test-lib"
 
 export const TestStateComp: React.FC = () => {
-
-    console.log(NoStateComp, "hello")
-
-    return <NoStateComp />
+    return <StateComp />
 }
