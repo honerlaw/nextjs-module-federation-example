@@ -1,0 +1,7 @@
+# The repo root ignores `lib/` (for the old mf-plugin build output); the host's lib/ is source.
+!host/lib/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+host/AGENTS.md
+host/CLAUDE.md
