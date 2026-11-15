@@ -1,0 +1,16 @@
+{
+  "name": "mf-remote",
+  "private": true,
+  "scripts": {
+    "build": "rspack build",
+    "serve": "node serve.mjs",
+    "dev": "rspack build --watch"
+  },
+  "devDependencies": {
+    "@module-federation/enhanced": "2.9.3",
+    "@module-federation/node": "2.7.53",
+    "@rspack/cli": "2.3.2",
+    "@rspack/core": "2.3.2",
+    "react": "19.3.1"
+  }
+}
